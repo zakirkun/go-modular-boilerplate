@@ -1,0 +1,24 @@
+[server]
+app_name="Backend Modules"
+mode = "info"
+port = "9000"
+http_timeout = 60
+cache_expired = 24
+cache_purged = 60
+
+[database]
+db_driver = "mysql"
+db_host = "localhost"
+db_port = "3306"
+db_name = "backend_modules"
+db_username = "user"
+db_password = "password"
+
+[pool]
+conn_idle = 200
+conn_max = 300
+conn_lifetime = 60
+
+[jwt]
+day_expired = 60
+signature_key = "SuperShy!"

@@ -1,0 +1,38 @@
+services:
+  backend_modules:
+    container_name: backend_modules
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    restart: always
+    links:
+      - db
+    networks:
+    - infrastructure
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql:8.0.38
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: backend_modules
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      TZ: "Asia/Jakarta"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+    - infrastructure
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
