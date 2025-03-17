@@ -15,7 +15,7 @@ services:
       db:
         condition: service_healthy
   db:
-    image: mysql:8.0.38
+    image: mysql:8.0
     container_name: db
     restart: always
     environment:
@@ -36,3 +36,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+
+volumes:
+  mysql_data:
+
+networks:
+  infrastructure:
+    driver: bridge
