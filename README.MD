@@ -14,16 +14,12 @@ A scalable, modular Golang application built with Echo framework, GORM ORM, and 
 
 ## Modules
 
-The application currently includes the following modules:
+The application currently includes the following modules for examples:
 
 1. **User Module**: 
    - User management functionality
    - CRUD operations for user accounts
 
-2. **Cashflow Module**:
-   - Financial transaction tracking
-   - Categories and transactions
-   - Filtering by date, type, and category
 
 ## Getting Started
 
