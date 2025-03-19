@@ -44,13 +44,13 @@ func (s *UserService) GetUserByID(ctx context.Context, id uint) (*entity.User, e
 
 // CreateUser creates a new user
 func (s *UserService) CreateUser(ctx context.Context, user *entity.User) error {
-	existingUser, err := s.userRepo.FindByEmail(ctx, user.Email)
-	if err != nil {
-		return err
-	}
-	if existingUser != nil {
-		return ErrEmailAlreadyUsed
-	}
+	// existingUser, err := s.userRepo.FindByEmail(ctx, user.Email)
+	// if err != nil && err != repository.ERR_RECORD_NOT_FOUND {
+	// 	return err
+	// }
+	// if existingUser != nil {
+	// 	return ErrEmailAlreadyUsed
+	// }
 
 	return s.userRepo.Create(ctx, user)
 }

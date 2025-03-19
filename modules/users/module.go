@@ -18,6 +18,7 @@ type Module struct {
 	logger      *logger.Logger
 	userService *service.UserService
 	userHandler *handler.UserHandler
+	event       *bus.EventBus
 }
 
 // Name returns the name of the module
@@ -26,9 +27,10 @@ func (m *Module) Name() string {
 }
 
 // Initialize initializes the module
-func (m *Module) Initialize(db *gorm.DB, log *logger.Logger) error {
+func (m *Module) Initialize(db *gorm.DB, log *logger.Logger, event *bus.EventBus) error {
 	m.db = db
 	m.logger = log
+	m.event = event
 
 	m.logger.Info("Initializing user module")
 
@@ -41,8 +43,12 @@ func (m *Module) Initialize(db *gorm.DB, log *logger.Logger) error {
 	m.logger.Debug("User service initialized")
 
 	// Initialize handlers
-	m.userHandler = handler.NewUserHandler(m.logger, m.userService)
+	m.userHandler = handler.NewUserHandler(m.logger, m.event, m.userService)
 	m.logger.Debug("User handler initialized")
+
+	// register event listeners
+	m.logger.Info("Registering user module event listeners")
+	m.event.SubscribeFunc("user.created", m.userHandler.Handle)
 
 	m.logger.Info("User module initialized successfully")
 	return nil
@@ -64,11 +70,6 @@ func (m *Module) Migrations() error {
 // Logger returns the module's logger
 func (m *Module) Logger() *logger.Logger {
 	return m.logger
-}
-
-// EventDrivers returns the module's event drivers
-func (m *Module) RegisterEventDrivers(event *bus.EventBus) {
-	event.Subscribe("user.created", m.userHandler)
 }
 
 // NewModule creates a new user module

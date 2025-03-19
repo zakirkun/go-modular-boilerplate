@@ -62,6 +62,9 @@ func (a *App) Initialize() error {
 	// Set database instance for all modules
 	database.DB = a.db
 
+	// event bus initialization
+	event := bus.NewEventBus()
+
 	// initialize router
 	a.r = a.SetRouter()
 	a.r.Use(middleware.Logger())
@@ -77,7 +80,7 @@ func (a *App) Initialize() error {
 
 		// Create module-specific logger
 		moduleLogger := a.logger.WithPrefix(module.Name())
-		if err := module.Initialize(a.db, moduleLogger); err != nil {
+		if err := module.Initialize(a.db, moduleLogger, event); err != nil {
 			a.logger.Error("Failed to initialize module %s: %v", module.Name(), err)
 			return err
 		}
@@ -92,12 +95,6 @@ func (a *App) Initialize() error {
 			a.logger.Error("Failed to run migrations for module %s: %v", module.Name(), err)
 		}
 		a.logger.Info("Migrations completed for module: %s", module.Name())
-	}
-
-	// event bus initialization
-	event := bus.NewEventBus()
-	for _, module := range a.modules {
-		module.RegisterEventDrivers(event)
 	}
 
 	// Initialize HTTP server

@@ -2,8 +2,13 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"go-modular-boilerplate/internal/pkg/database"
 	"go-modular-boilerplate/modules/users/domain/entity"
+)
+
+var (
+	ERR_RECORD_NOT_FOUND = errors.New("record not found")
 )
 
 type UserRepositoryImpl struct{}
@@ -33,6 +38,10 @@ func (r UserRepositoryImpl) FindByEmail(ctx context.Context, email string) (*ent
 	var user entity.User
 	result := database.DB.WithContext(ctx).Where("email = ?", email).First(&user)
 	if result.Error != nil {
+		if result.RowsAffected == 0 {
+			return nil, ERR_RECORD_NOT_FOUND
+		}
+
 		return nil, result.Error
 	}
 	return &user, nil

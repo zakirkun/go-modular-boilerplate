@@ -14,7 +14,7 @@ type Module interface {
 	Name() string
 
 	// Initialize initializes the module
-	Initialize(db *gorm.DB, logger *logger.Logger) error
+	Initialize(db *gorm.DB, logger *logger.Logger, event *bus.EventBus) error
 
 	// RegisterRoutes registers the module's routes
 	RegisterRoutes(e *echo.Echo, group string)
@@ -24,7 +24,4 @@ type Module interface {
 
 	// Logger returns the module's logger
 	Logger() *logger.Logger
-
-	// Event Drivers returns the module's event drivers
-	RegisterEventDrivers(event *bus.EventBus)
 }
