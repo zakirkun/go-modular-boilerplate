@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"go-modular-boilerplate/internal/pkg/bus"
 	"go-modular-boilerplate/internal/pkg/config"
 	"go-modular-boilerplate/internal/pkg/database"
@@ -105,10 +106,13 @@ func (a *App) Initialize() error {
 	// Initialize HTTP server
 	a.server = a.SetServer()
 
+	// api version
+	version := fmt.Sprintf("/api/v%s", config.GetString("server.api_version"))
+
 	// Register routes for all modules
 	for _, module := range a.modules {
 		a.logger.Info("Registering routes for module: %s", module.Name())
-		module.RegisterRoutes(a.r, "/api")
+		module.RegisterRoutes(a.r, version)
 		a.logger.Info("Routes registered for module: %s", module.Name())
 	}
 
