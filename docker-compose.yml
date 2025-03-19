@@ -26,7 +26,7 @@ services:
       MYSQL_PASSWORD: password
       TZ: "Asia/Jakarta"
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:

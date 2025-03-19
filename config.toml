@@ -1,7 +1,7 @@
 [server]
 app_name="Backend Modules"
 mode = "info"
-port = "9000"
+port = "9988"
 http_timeout = 60
 cache_expired = 24
 cache_purged = 60
@@ -10,7 +10,7 @@ api_version = "1"
 [database]
 db_driver = "mysql"
 db_host = "localhost"
-db_port = "3306"
+db_port = "3307"
 db_name = "backend_modules"
 db_username = "user"
 db_password = "password"

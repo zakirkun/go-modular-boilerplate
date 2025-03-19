@@ -20,7 +20,7 @@ type Module interface {
 	RegisterRoutes(e *echo.Echo, group string)
 
 	// Migrations returns the module's database migrations
-	Migrations() []interface{}
+	Migrations() error
 
 	// Logger returns the module's logger
 	Logger() *logger.Logger

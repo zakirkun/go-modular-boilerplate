@@ -30,6 +30,7 @@ func NewApp(cfg *logger.Config) (*App, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer appLogger.Sync()
 	return &App{
 		modules: make([]Module, 0),
 		logger:  appLogger,
@@ -61,19 +62,6 @@ func (a *App) Initialize() error {
 	// Set database instance for all modules
 	database.DB = a.db
 
-	// Run migrations for all modules
-	for _, module := range a.modules {
-		migrations := module.Migrations()
-		if len(migrations) > 0 {
-			a.logger.Info("Running migrations for module: %s", module.Name())
-			if err := a.db.AutoMigrate(migrations...); err != nil {
-				a.logger.Error("Failed to run migrations for module %s: %v", module.Name(), err)
-				return err
-			}
-			a.logger.Info("Migrations completed for module: %s", module.Name())
-		}
-	}
-
 	// initialize router
 	a.r = a.SetRouter()
 	a.r.Use(middleware.Logger())
@@ -95,6 +83,15 @@ func (a *App) Initialize() error {
 		}
 
 		a.logger.Info("Module initialized: %s", module.Name())
+	}
+
+	// Run migrations for all modules
+	for _, module := range a.modules {
+		err := module.Migrations()
+		if err != nil {
+			a.logger.Error("Failed to run migrations for module %s: %v", module.Name(), err)
+		}
+		a.logger.Info("Migrations completed for module: %s", module.Name())
 	}
 
 	// event bus initialization
@@ -120,6 +117,10 @@ func (a *App) Initialize() error {
 	a.server.Handler = a.r
 
 	a.logger.Info("Application initialization completed")
+
+	for _, v := range a.r.Routes() {
+		fmt.Printf("PATH: %v | METHOD: %v\n", v.Path, v.Method)
+	}
 
 	return nil
 }

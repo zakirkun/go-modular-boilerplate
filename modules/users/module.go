@@ -56,11 +56,9 @@ func (m *Module) RegisterRoutes(e *echo.Echo, basePath string) {
 }
 
 // Migrations returns the module's migrations
-func (m *Module) Migrations() []interface{} {
+func (m *Module) Migrations() error {
 	m.logger.Info("Registering user module migrations")
-	return []interface{}{
-		&entity.User{},
-	}
+	return m.db.AutoMigrate(&entity.User{})
 }
 
 // Logger returns the module's logger
