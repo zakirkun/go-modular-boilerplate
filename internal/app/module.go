@@ -1,6 +1,7 @@
 package app
 
 import (
+	"go-modular-boilerplate/internal/pkg/bus"
 	"go-modular-boilerplate/internal/pkg/logger"
 
 	"github.com/labstack/echo"
@@ -23,4 +24,7 @@ type Module interface {
 
 	// Logger returns the module's logger
 	Logger() *logger.Logger
+
+	// Event Drivers returns the module's event drivers
+	RegisterEventDrivers(event *bus.EventBus)
 }

@@ -1,6 +1,7 @@
 package user
 
 import (
+	"go-modular-boilerplate/internal/pkg/bus"
 	"go-modular-boilerplate/internal/pkg/logger"
 	"go-modular-boilerplate/modules/users/domain/entity"
 	"go-modular-boilerplate/modules/users/domain/repository"
@@ -40,7 +41,7 @@ func (m *Module) Initialize(db *gorm.DB, log *logger.Logger) error {
 	m.logger.Debug("User service initialized")
 
 	// Initialize handlers
-	m.userHandler = handler.NewUserHandler(m.userService)
+	m.userHandler = handler.NewUserHandler(m.logger, m.userService)
 	m.logger.Debug("User handler initialized")
 
 	m.logger.Info("User module initialized successfully")
@@ -65,6 +66,11 @@ func (m *Module) Migrations() []interface{} {
 // Logger returns the module's logger
 func (m *Module) Logger() *logger.Logger {
 	return m.logger
+}
+
+// EventDrivers returns the module's event drivers
+func (m *Module) RegisterEventDrivers(event bus.EventBus) {
+	event.Subscribe("user.created", m.userHandler)
 }
 
 // NewModule creates a new user module

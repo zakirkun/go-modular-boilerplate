@@ -3,6 +3,8 @@
 package handler
 
 import (
+	"go-modular-boilerplate/internal/pkg/bus"
+	"go-modular-boilerplate/internal/pkg/logger"
 	"go-modular-boilerplate/modules/users/domain/entity"
 	"go-modular-boilerplate/modules/users/domain/service"
 	"go-modular-boilerplate/modules/users/dto/request"
@@ -16,13 +18,20 @@ import (
 // UserHandler handles HTTP requests for users
 type UserHandler struct {
 	userService *service.UserService
+	log         *logger.Logger
 }
 
 // NewUserHandler creates a new user handler
-func NewUserHandler(userService *service.UserService) *UserHandler {
+func NewUserHandler(log *logger.Logger, userService *service.UserService) *UserHandler {
 	return &UserHandler{
 		userService: userService,
+		log:         log,
 	}
+}
+
+// Event Bus Event user created
+func (h *UserHandler) Handle(event bus.Event) {
+	h.log.Info("User created: %v", event.Payload)
 }
 
 // GetAllUsers gets all users
@@ -78,6 +87,10 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 		}
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
+
+	// event bus publish
+	events := bus.NewEventBus()
+	events.Publish(bus.Event{Type: "user.created", Payload: user})
 
 	return c.JSON(http.StatusCreated, response.FromEntity(user))
 }

@@ -1,6 +1,7 @@
 package app
 
 import (
+	"go-modular-boilerplate/internal/pkg/bus"
 	"go-modular-boilerplate/internal/pkg/config"
 	"go-modular-boilerplate/internal/pkg/database"
 	"go-modular-boilerplate/internal/pkg/logger"
@@ -24,7 +25,7 @@ type App struct {
 
 // NewApp creates a new application
 func NewApp(cfg *logger.Config) (*App, error) {
-	appLogger, err := logger.NewLogger(*cfg, "app")
+	appLogger, err := logger.NewLogger(*cfg, config.GetString("server.app_name"))
 	if err != nil {
 		return nil, err
 	}
@@ -93,6 +94,12 @@ func (a *App) Initialize() error {
 		}
 
 		a.logger.Info("Module initialized: %s", module.Name())
+	}
+
+	// event bus initialization
+	event := bus.NewEventBus()
+	for _, module := range a.modules {
+		module.RegisterEventDrivers(event)
 	}
 
 	// Initialize HTTP server
