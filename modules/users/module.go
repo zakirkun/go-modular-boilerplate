@@ -69,7 +69,7 @@ func (m *Module) Logger() *logger.Logger {
 }
 
 // EventDrivers returns the module's event drivers
-func (m *Module) RegisterEventDrivers(event bus.EventBus) {
+func (m *Module) RegisterEventDrivers(event *bus.EventBus) {
 	event.Subscribe("user.created", m.userHandler)
 }
 
