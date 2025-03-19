@@ -4,6 +4,7 @@ import (
 	"flag"
 	"go-modular-boilerplate/internal/app"
 	"go-modular-boilerplate/internal/pkg/config"
+	"go-modular-boilerplate/internal/pkg/logger"
 	user "go-modular-boilerplate/modules/users"
 	"log"
 	"os"
@@ -25,8 +26,15 @@ func main() {
 		os.Exit(1)
 	}
 
+	// initialize logger
+	logCfg := logger.DefaultConfig()
+
 	// Start the application
-	app := app.NewApp(&cfg)
+	app, err := app.NewApp(&logCfg)
+	if err != nil {
+		log.Fatalf("Error creating application : %v", err)
+		os.Exit(1)
+	}
 
 	// register modules
 	app.RegisterModule(user.NewModule())

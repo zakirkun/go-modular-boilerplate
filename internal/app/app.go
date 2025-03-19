@@ -15,7 +15,6 @@ import (
 
 // App represents the application
 type App struct {
-	config  *config.Config
 	db      *gorm.DB
 	server  *server.ServerContext
 	modules []Module
@@ -24,13 +23,15 @@ type App struct {
 }
 
 // NewApp creates a new application
-func NewApp(cfg *config.Config) *App {
-	appLogger := logger.NewLogger(config.GetString("server.mode"), "app")
+func NewApp(cfg *logger.Config) (*App, error) {
+	appLogger, err := logger.NewLogger(*cfg, "app")
+	if err != nil {
+		return nil, err
+	}
 	return &App{
-		config:  cfg,
 		modules: make([]Module, 0),
 		logger:  appLogger,
-	}
+	}, nil
 }
 
 func (a *App) SetRouter() *echo.Echo {
